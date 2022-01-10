@@ -53,10 +53,10 @@ export const ProjectCard = ({
       <ProjectDescription>{description}</ProjectDescription>
       <BlueSubText>
         {tags.map((tag, index) => (
-          <>
+          <span key={tag}>
             <span>{tag}</span>
             {index !== tags?.length - 1 ? " - " : ""}
-          </>
+          </span>
         ))}
       </BlueSubText>
       <Flex style={{ marginTop: "38px" }} justify="flex-start">
