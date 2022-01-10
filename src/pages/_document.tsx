@@ -23,7 +23,6 @@ export default class MyDocument extends Document {
     return (
       <Html>
         <Head>
-          // eslint-disable-next-line @next/next/no-css-tags
           {/*@ts-ignore*/}
           {this.props.styleTags}
         </Head>
