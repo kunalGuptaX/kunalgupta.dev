@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import styled from "styled-components";
 import { Button } from "../components/Button";
 import Header from "../components/Header";
-import { MdEmail } from "react-icons/Md";
+import { MdEmail } from "react-icons/md";
 import { FaLinkedinIn } from "react-icons/fa";
 import { SiUpwork, SiGithub } from "react-icons/si";
 import TabMenuContent from "../components/TabMenuContent/TabMenuContent";
