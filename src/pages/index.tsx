@@ -43,6 +43,7 @@ const CenterContentContainer = styled.div`
   color: #ffffff;
   font-size: 18px;
   line-height: 24px;
+  white-space: pre-wrap;
 `;
 
 const Name = styled.h1`
