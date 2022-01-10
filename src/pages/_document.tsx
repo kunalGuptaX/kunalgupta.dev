@@ -1,14 +1,15 @@
+/* eslint-disable react/jsx-no-comment-textnodes */
 import Document, { Html, Main, NextScript, Head } from "next/document";
 import { ServerStyleSheet } from "styled-components";
 
 export default class MyDocument extends Document {
-  static getInitialProps({ renderPage }) {
+  static getInitialProps({ renderPage }: { renderPage: any }) {
     // Step 1: Create an instance of ServerStyleSheet
     const sheet = new ServerStyleSheet();
 
     // Step 2: Retrieve styles from components in the page
     const page = renderPage(
-      (App) => (props) => sheet.collectStyles(<App {...props} />)
+      (App: any) => (props: any) => sheet.collectStyles(<App {...props} />)
     );
 
     // Step 3: Extract the styles as <style> tags
@@ -22,7 +23,8 @@ export default class MyDocument extends Document {
     return (
       <Html>
         <Head>
-          <link href="/fonts/GTWalsheim/stylesheet.css" rel="stylesheet" />
+          // eslint-disable-next-line @next/next/no-css-tags
+          {/*@ts-ignore*/}
           {this.props.styleTags}
         </Head>
         <body>
@@ -33,4 +35,3 @@ export default class MyDocument extends Document {
     );
   }
 }
-

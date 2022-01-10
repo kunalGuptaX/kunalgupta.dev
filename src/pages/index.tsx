@@ -96,7 +96,7 @@ const Home: NextPage = () => {
         <HeroContent>
           <Header />
           <CenterContentContainer>
-            Hey I'm <Name>{content.name}</Name>
+            {`Hey I'm`} <Name>{content.name}</Name>
             {content.aboutMe}
           </CenterContentContainer>
           <BottomButtonContainer>
