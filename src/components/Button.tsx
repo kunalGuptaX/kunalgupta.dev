@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const Button = styled.button<{ borderGradient?: string; }>`
+export const Button = styled.button<{ borderGradient?: string }>`
   cursor: pointer;
   user-select: none;
   padding: 16px 26px;
@@ -49,6 +49,10 @@ export const Button = styled.button<{ borderGradient?: string; }>`
 
   &:hover {
     opacity: 0.8;
-    box-shadow:  0 0 9px 0 rgba(157, 96, 212, 0.5);
+    box-shadow: 0 0 9px 0 rgba(157, 96, 212, 0.5);
+  }
+  @media (max-width: ${382}px) {
+    padding: 8px 20px;
+    font-size: 14px;
   }
 `;

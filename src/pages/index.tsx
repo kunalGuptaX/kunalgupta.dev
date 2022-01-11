@@ -59,6 +59,11 @@ const Name = styled.h1`
     font-size: 58px;
     line-height: 58px;
   }
+  @media (max-width: ${382}px) {
+    font-size: 38px;
+    line-height: 38px;
+    margin: 12px 0;
+  }
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-style: normal;
@@ -93,6 +98,13 @@ const ProjectsContainer = styled.div`
   justify-content: space-between;
 `;
 
+const AboutMe = styled.div`
+@media (max-width: ${382}px) {
+  font-size: 14px;
+  line-height: 18px;
+}
+`
+
 const Home: NextPage = () => {
   return (
     <div
@@ -108,7 +120,9 @@ const Home: NextPage = () => {
           <Header />
           <CenterContentContainer>
             {`Hey I'm`} <Name>{content.name}</Name>
+            <AboutMe>
             {content.aboutMe}
+            </AboutMe>
           </CenterContentContainer>
           <BottomButtonContainer>
             <a

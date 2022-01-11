@@ -26,7 +26,8 @@ const ProjectCardContainer = styled.div`
 `;
 
 const ProjectCardImage = styled.img`
-  width: 344px;
+  max-width: 344px;
+  width: 100%;
   height: 237px;
   object-fit: cover;
 `;

@@ -23,6 +23,9 @@ const TabsContainer = styled.div`
     overflow: unset;
     margin-bottom: 24px;
   }
+  @media (max-width: ${382}px) {
+    flex-direction: column;
+  }
 `;
 
 const ContentContainer = styled.div`

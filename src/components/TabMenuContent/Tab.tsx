@@ -24,6 +24,11 @@ const Tab = styled.div<{ selected: boolean }>`
     background-color: ${({ selected }) =>
       selected ? "transparent" : "#1F1E1E"};
   }
+  @media (max-width: ${382}px) {
+    background-color: ${({ selected }) => (selected ? "#1F1E1E" : "transparent")};
+    border-top: none;
+    border-left: 2px solid ${({ selected }) => (selected ? "#FFFFFF" : "#1F1E1E")};
+  }
 `;
 
 export default Tab;
