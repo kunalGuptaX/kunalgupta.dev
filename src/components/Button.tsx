@@ -10,7 +10,8 @@ export const Button = styled.button<{ borderGradient?: string }>`
   line-height: 24px;
   font-size: 16px;
   color: white;
-  border: 2px solid transparent;
+  border-width: 2px;
+  border-style: solid;
   border-image-source: ${({ borderGradient }) =>
     borderGradient ||
     `linear-gradient(
