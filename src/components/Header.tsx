@@ -11,7 +11,8 @@ const Container = styled.div`
     font-size: 24px;
     font-weight: 300;
     color: #FFFFFF;
-    width: 1078px;
+    max-width: 1078px;
+    width: 100%;
 `
 
 const Header = (props: Props) => {

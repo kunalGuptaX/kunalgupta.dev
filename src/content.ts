@@ -36,3 +36,8 @@ export const content = {
     },
   ],
 };
+
+
+export const config = {
+  breakpoint: 768
+}

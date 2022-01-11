@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { config } from "../content";
 import { BlueSubText } from "./BlueSubText";
 import { DescriptionText } from "./DescriptionText";
 import { Title } from "./Title";
@@ -19,6 +20,9 @@ const ExperienceCardHeader = styled.div`
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
+  @media (max-width: ${config.breakpoint}px) {
+    flex-direction: column;
+  }
 `;
 
 const Duration = styled.div`
@@ -52,7 +56,7 @@ export const ExperienceCard = ({
         <Title>{title}</Title>
         <Duration>
           {`${startMonth} ${startYear} - ${
-            isPresentJob ? "Present" : `${endMonth}} ${endYear}`
+            isPresentJob ? "Present" : `${endMonth} ${endYear}`
           }`}
         </Duration>
       </ExperienceCardHeader>

@@ -10,7 +10,7 @@ import { ExperienceCard } from "../components/ExperienceCard";
 import { HorizontalBar } from "../components/HorizontalBar";
 import { UppercaseTitle } from "../components/UppercaseTitle";
 import { ProjectCard } from "../components/ProjectCard";
-import { content } from "../content";
+import { config, content } from "../content";
 import Link from "next/link";
 
 const HeroContainer = styled.div`
@@ -23,6 +23,7 @@ const HeroContainer = styled.div`
 
 const HeroContent = styled.div`
   max-width: 1078px;
+  padding: 0 24px;
   width: 100%;
   position: relative;
   display: flex;
@@ -34,6 +35,7 @@ const BottomButtonContainer = styled.div`
   color: white;
   display: flex;
   margin-bottom: 84px;
+  flex-wrap: wrap;
 `;
 
 const CenterContentContainer = styled.div`
@@ -53,6 +55,10 @@ const Name = styled.h1`
     #33d2ff 54.05%,
     #dd5789 99.78%
   );
+  @media (max-width: ${config.breakpoint}px) {
+    font-size: 58px;
+    line-height: 58px;
+  }
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-style: normal;
@@ -72,6 +78,7 @@ const SecondarContentContainer = styled.div`
 
 const SecondaryContent = styled.div`
   max-width: 1078px;
+  padding: 0 24px;
   width: 100%;
   margin-top: 124px;
 `;

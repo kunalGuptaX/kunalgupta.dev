@@ -17,7 +17,8 @@ interface ProjectCard {
 }
 
 const ProjectCardContainer = styled.div`
-  width: 344px;
+  max-width: 344px;
+  width: 100%;
   height: 634px;
   ${Button} {
     margin-left: 0;
