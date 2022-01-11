@@ -62,20 +62,25 @@ export const ProjectCard = ({
       </BlueSubText>
       <Flex style={{ marginTop: "38px" }} justify="flex-start">
         {demoLink ? (
-          <Button>
-            <BiLinkAlt size="20px" />
-            Live Demo
-          </Button>
+          <a href={demoLink} target="_blank" rel="noreferrer">
+            <Button>
+              <BiLinkAlt size="20px" />
+              Live Demo
+            </Button>
+          </a>
         ) : (
           <></>
         )}
         {githubLink ? (
-          <div
+          <a
+            href={githubLink}
             style={{ marginLeft: "16px", cursor: "pointer" }}
             onClick={() => null}
+            target="_blank"
+            rel="noreferrer"
           >
             <SiGithub size="36px" />
-          </div>
+          </a>
         ) : (
           <></>
         )}

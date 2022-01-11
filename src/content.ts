@@ -35,6 +35,16 @@ export const content = {
       },
     },
   ],
+  projects: [
+    {
+      imageSrc: "https://image.thum.io/get/https://kunalgupta.dev/",
+      title: "kunalgupta.dev",
+      description: "My Portfolio",
+      tags: ["NextJS", "styled-components"],
+      demoLink: "https://kunalgupta.dev",
+      githubLink: "https://github.com/kunalGuptaX/kunalgupta.dev"
+    }
+  ]
 };
 
 

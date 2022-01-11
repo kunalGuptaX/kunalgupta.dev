@@ -81,6 +81,9 @@ const SecondaryContent = styled.div`
   padding: 0 24px;
   width: 100%;
   margin-top: 124px;
+  @media (max-width: ${config.breakpoint}px) {
+    margin-top: 84px;
+  }
 `;
 
 const ProjectsContainer = styled.div`
@@ -178,14 +181,17 @@ const Home: NextPage = () => {
           <div>
             <UppercaseTitle>featured projects</UppercaseTitle>
             <ProjectsContainer>
-              <ProjectCard
-                imageSrc="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRk5UAuVcVZO2s03P-2-707_D6SjSqKH16AMv7HqEJ8Lr3C02_coQ4nWtpyVeP9y0nkjZI&usqp=CAU"
-                description="Proxy provider website including authentication, dashboard and dynamic features"
-                tags={["React", "redux"]}
-                title="React"
-                demoLink="rws"
-                githubLink="test"
-              />
+              {content.projects.map((project) => (
+                <ProjectCard
+                  key={project.title}
+                  imageSrc={project.imageSrc}
+                  description={project.description}
+                  tags={project.tags}
+                  title={project.title}
+                  demoLink={project.demoLink}
+                  githubLink={project.githubLink}
+                />
+              ))}
             </ProjectsContainer>
           </div>
         </SecondaryContent>
