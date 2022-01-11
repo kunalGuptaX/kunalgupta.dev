@@ -118,24 +118,36 @@ const Home: NextPage = () => {
                 Send an email
               </Button>
             </a>
-            <a href={content.linkedin} target="_blank" rel="noreferrer">
-              <Button borderGradient="linear-gradient(135deg, #6964DE 2.88%, #FCA6E9 100%)">
-                <FaLinkedinIn size="20px" />
-                LinkedIn
-              </Button>
-            </a>
-            <a href={content.upwork} target="_blank" rel="noreferrer">
-              <Button borderGradient="linear-gradient(45.4deg, #F4426C 6.41%, #FBF2B1 98.99%)">
-                <SiUpwork size="20px" />
-                Upwork
-              </Button>
-            </a>
-            <a href={content.github} target="_blank" rel="noreferrer">
-              <Button borderGradient="linear-gradient(132.33deg, #D24074 -0.67%, #6518B4 102.54%)">
-                <SiGithub size="20px" />
-                Github
-              </Button>
-            </a>
+            {content.linkedin ? (
+              <a href={content.linkedin} target="_blank" rel="noreferrer">
+                <Button borderGradient="linear-gradient(135deg, #6964DE 2.88%, #FCA6E9 100%)">
+                  <FaLinkedinIn size="20px" />
+                  LinkedIn
+                </Button>
+              </a>
+            ) : (
+              <></>
+            )}
+            {content.upwork ? (
+              <a href={content.upwork} target="_blank" rel="noreferrer">
+                <Button borderGradient="linear-gradient(45.4deg, #F4426C 6.41%, #FBF2B1 98.99%)">
+                  <SiUpwork size="20px" />
+                  Upwork
+                </Button>
+              </a>
+            ) : (
+              <></>
+            )}
+            {content.github ? (
+              <a href={content.github} target="_blank" rel="noreferrer">
+                <Button borderGradient="linear-gradient(132.33deg, #D24074 -0.67%, #6518B4 102.54%)">
+                  <SiGithub size="20px" />
+                  Github
+                </Button>
+              </a>
+            ) : (
+              <></>
+            )}
           </BottomButtonContainer>
         </HeroContent>
       </HeroContainer>
