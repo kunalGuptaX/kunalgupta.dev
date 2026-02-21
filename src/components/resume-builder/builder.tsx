@@ -2,7 +2,6 @@
 
 import { useForm, FormProvider } from 'react-hook-form'
 import { useRef, useState, useEffect, useCallback } from 'react'
-import { Inter, Bitter } from 'next/font/google'
 import { Download, Upload, FileJson, RotateCcw, Type, Space } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
@@ -10,9 +9,6 @@ import { ResumeForm } from './form'
 import { ResumePreview } from './preview'
 import { ResumePreviewMinimal } from './preview-minimal'
 import { defaultResumeData, emptyResumeData, type ResumeData } from './types'
-
-const inter = Inter({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800', '900'] })
-const bitter = Bitter({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800', '900'], variable: '--font-bitter' })
 
 const STORAGE_KEY = 'resume-builder-data'
 
@@ -175,9 +171,10 @@ const templates: { id: Template; label: string; description: string }[] = [
 type ResumeBuilderProps = {
   prefillData?: ResumeData
   autoDownload?: boolean
+  fontClassName?: string
 }
 
-export function ResumeBuilder({ prefillData, autoDownload }: ResumeBuilderProps) {
+export function ResumeBuilder({ prefillData, autoDownload, fontClassName = '' }: ResumeBuilderProps) {
   const [initialData, setInitialData] = useState<ResumeData | null>(null)
 
   useEffect(() => {
@@ -190,10 +187,10 @@ export function ResumeBuilder({ prefillData, autoDownload }: ResumeBuilderProps)
 
   if (!initialData) return null
 
-  return <ResumeBuilderInner initialData={initialData} autoDownload={autoDownload} />
+  return <ResumeBuilderInner initialData={initialData} autoDownload={autoDownload} fontClassName={fontClassName} />
 }
 
-function ResumeBuilderInner({ initialData, autoDownload }: { initialData: ResumeData; autoDownload?: boolean }) {
+function ResumeBuilderInner({ initialData, autoDownload, fontClassName = '' }: { initialData: ResumeData; autoDownload?: boolean; fontClassName?: string }) {
   const form = useForm<ResumeData>({ defaultValues: initialData })
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [template, setTemplate] = useState<Template>('classic')
@@ -211,8 +208,10 @@ function ResumeBuilderInner({ initialData, autoDownload }: { initialData: Resume
   // Auto-download PDF when requested via query param
   useEffect(() => {
     if (autoDownload) {
-      const timer = setTimeout(() => window.print(), 500)
-      return () => clearTimeout(timer)
+      // Wait for fonts to finish loading before triggering print
+      document.fonts.ready.then(() => {
+        setTimeout(() => window.print(), 300)
+      })
     }
   }, [autoDownload])
 
@@ -344,7 +343,7 @@ function ResumeBuilderInner({ initialData, autoDownload }: { initialData: Resume
               transformOrigin: 'top center',
             }}
           >
-            <PaginatedPreview className={`${inter.className} ${bitter.variable}`}>
+            <PaginatedPreview className={fontClassName}>
               <PreviewComponent fontSizeOffset={fontSizeOffset} spacingScale={spacingScale} />
             </PaginatedPreview>
           </div>
@@ -353,7 +352,7 @@ function ResumeBuilderInner({ initialData, autoDownload }: { initialData: Resume
 
       {/* Print-only: full-size preview */}
       <div style={{ display: 'none' }} className="print-resume-only">
-        <div className={`resume-preview ${inter.className} ${bitter.variable}`} style={{ width: '794px' }}>
+        <div className={`resume-preview ${fontClassName}`} style={{ width: '794px' }}>
           <PreviewComponent fontSizeOffset={fontSizeOffset} spacingScale={spacingScale} />
         </div>
       </div>
