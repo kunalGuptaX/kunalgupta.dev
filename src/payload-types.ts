@@ -99,8 +99,14 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'site-config': SiteConfig;
+    resume: Resume;
+  };
+  globalsSelect: {
+    'site-config': SiteConfigSelect<false> | SiteConfigSelect<true>;
+    resume: ResumeSelect<false> | ResumeSelect<true>;
+  };
   locale: null;
   user: User;
   jobs: {
@@ -779,6 +785,156 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-config".
+ */
+export interface SiteConfig {
+  id: number;
+  name: string;
+  initials: string;
+  title: string;
+  bio: string;
+  email: string;
+  socials?: {
+    github?: string | null;
+    linkedin?: string | null;
+    twitter?: string | null;
+  };
+  nav?:
+    | {
+        label: string;
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resume".
+ */
+export interface Resume {
+  id: number;
+  skills?:
+    | {
+        name: string;
+        id?: string | null;
+      }[]
+    | null;
+  experience?:
+    | {
+        role: string;
+        company: string;
+        companyUrl?: string | null;
+        location: string;
+        type: string;
+        startDate: string;
+        endDate: string;
+        bullets?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  projects?:
+    | {
+        name: string;
+        description: string;
+        techStack?:
+          | {
+              name: string;
+              id?: string | null;
+            }[]
+          | null;
+        liveUrl?: string | null;
+        sourceUrl?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-config_select".
+ */
+export interface SiteConfigSelect<T extends boolean = true> {
+  name?: T;
+  initials?: T;
+  title?: T;
+  bio?: T;
+  email?: T;
+  socials?:
+    | T
+    | {
+        github?: T;
+        linkedin?: T;
+        twitter?: T;
+      };
+  nav?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resume_select".
+ */
+export interface ResumeSelect<T extends boolean = true> {
+  skills?:
+    | T
+    | {
+        name?: T;
+        id?: T;
+      };
+  experience?:
+    | T
+    | {
+        role?: T;
+        company?: T;
+        companyUrl?: T;
+        location?: T;
+        type?: T;
+        startDate?: T;
+        endDate?: T;
+        bullets?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  projects?:
+    | T
+    | {
+        name?: T;
+        description?: T;
+        techStack?:
+          | T
+          | {
+              name?: T;
+              id?: T;
+            };
+        liveUrl?: T;
+        sourceUrl?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

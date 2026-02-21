@@ -12,6 +12,7 @@ export const siteConfig = {
   },
   nav: [
     { label: 'Resume', href: '/#experience' },
+    { label: 'Resume Builder', href: '/resume-builder' },
     { label: 'Blog', href: '/blog' },
     { label: 'Contact', href: '/#contact' },
   ],

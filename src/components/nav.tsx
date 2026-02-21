@@ -1,33 +1,24 @@
-'use client'
-
 import Link from 'next/link'
-import { siteConfig } from '@/data/site'
+import { getSiteConfig } from '@/utilities/getSiteConfig'
 import { IconGitHub, IconLinkedIn, IconTwitter } from '@/components/icons'
+import { NavLinks } from './nav-links'
 
-export function Nav() {
+export async function Nav() {
+  const config = await getSiteConfig()
+
   return (
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-sm">
       <div className="mx-auto flex max-w-[680px] items-center justify-between px-6 py-4">
         <Link href="/" className="font-mono text-lg font-bold text-foreground" aria-label="Home">
-          {siteConfig.initials}
+          {config.initials}
         </Link>
 
         <div className="flex items-center gap-6">
-          <nav aria-label="Main navigation" className="hidden items-center gap-6 sm:flex">
-            {siteConfig.nav.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+          <NavLinks items={config.nav} />
 
           <div className="flex items-center gap-3" aria-label="Social links" role="group">
             <a
-              href={siteConfig.socials.github}
+              href={config.socials.github}
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground transition-colors hover:text-foreground"
@@ -36,7 +27,7 @@ export function Nav() {
               <IconGitHub className="h-4 w-4" />
             </a>
             <a
-              href={siteConfig.socials.linkedin}
+              href={config.socials.linkedin}
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground transition-colors hover:text-foreground"
@@ -45,7 +36,7 @@ export function Nav() {
               <IconLinkedIn className="h-4 w-4" />
             </a>
             <a
-              href={siteConfig.socials.twitter}
+              href={config.socials.twitter}
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground transition-colors hover:text-foreground"

@@ -1,7 +1,9 @@
 import { Badge } from '@/components/ui/badge'
-import { skills } from '@/data/resume'
+import { getResume } from '@/utilities/getResume'
 
-export function Skills() {
+export async function Skills() {
+  const { skills } = await getResume()
+
   return (
     <section id="skills" aria-label="Technical skills" className="py-16 sm:py-20">
       <h2 className="text-2xl font-bold tracking-tight text-foreground">Skills</h2>

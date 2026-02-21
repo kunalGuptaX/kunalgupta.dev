@@ -4,19 +4,19 @@ import { Experience } from '@/components/experience'
 import { Projects } from '@/components/projects'
 import { Contact } from '@/components/contact'
 import { Separator } from '@/components/ui/separator'
-import { siteConfig, socialUrls } from '@/data/site'
+import { getSiteConfig } from '@/utilities/getSiteConfig'
 
-export const dynamic = 'force-static'
+export default async function HomePage() {
+  const config = await getSiteConfig()
 
-export default function HomePage() {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Person',
-    name: siteConfig.name,
-    jobTitle: siteConfig.title,
-    url: siteConfig.url,
-    email: siteConfig.email,
-    sameAs: socialUrls,
+    name: config.name,
+    jobTitle: config.title,
+    url: config.url,
+    email: config.email,
+    sameAs: Object.values(config.socials).filter(Boolean),
   }
 
   return (

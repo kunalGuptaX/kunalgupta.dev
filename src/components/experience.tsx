@@ -1,18 +1,20 @@
-import { experience } from '@/data/resume'
+import Link from 'next/link'
+import { getResume } from '@/utilities/getResume'
 
-export function Experience() {
+export async function Experience() {
+  const { experience } = await getResume()
+
   return (
     <section id="experience" aria-label="Work experience" className="py-16 sm:py-20">
       <h2 className="text-2xl font-bold tracking-tight text-foreground">Experience</h2>
       <p className="mt-2 text-sm text-muted-foreground">
         My work history.{' '}
-        <a
-          href="/resume.pdf"
+        <Link
+          href="/resume-builder?source=portfolio&download=true"
           className="underline underline-offset-4 transition-colors hover:text-foreground"
-          download
         >
           Download my resume
-        </a>
+        </Link>
       </p>
 
       <div className="mt-8 space-y-0">

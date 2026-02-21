@@ -1,12 +1,14 @@
 import Link from 'next/link'
-import { siteConfig } from '@/data/site'
+import { getSiteConfig } from '@/utilities/getSiteConfig'
 
-export function SiteFooter() {
+export async function SiteFooter() {
+  const config = await getSiteConfig()
+
   return (
     <footer className="mt-auto border-t border-border/50">
       <div className="mx-auto flex max-w-[680px] flex-col items-center justify-between gap-4 px-6 py-8 sm:flex-row">
         <p className="text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} {siteConfig.name}
+          &copy; {new Date().getFullYear()} {config.name}
         </p>
         <nav aria-label="Footer" className="text-sm text-muted-foreground">
           Built with{' '}

@@ -1,9 +1,11 @@
 import { Badge } from '@/components/ui/badge'
-import { projects } from '@/data/resume'
+import { getResume } from '@/utilities/getResume'
 import { IconGitHub } from '@/components/icons'
 import { ExternalLink } from 'lucide-react'
 
-export function Projects() {
+export async function Projects() {
+  const { projects } = await getResume()
+
   return (
     <section id="projects" aria-label="Projects" className="py-16 sm:py-20">
       <h2 className="text-2xl font-bold tracking-tight text-foreground">Projects</h2>

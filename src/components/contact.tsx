@@ -1,8 +1,10 @@
-import { siteConfig } from '@/data/site'
+import { getSiteConfig } from '@/utilities/getSiteConfig'
 import { IconGitHub, IconLinkedIn, IconTwitter } from '@/components/icons'
 import { Mail } from 'lucide-react'
 
-export function Contact() {
+export async function Contact() {
+  const config = await getSiteConfig()
+
   return (
     <section id="contact" aria-label="Contact information" className="py-16 sm:py-20">
       <h2 className="text-2xl font-bold tracking-tight text-foreground">Get in touch</h2>
@@ -13,15 +15,15 @@ export function Contact() {
       <div className="mt-6 flex items-center gap-2">
         <Mail className="h-4 w-4 text-muted-foreground" />
         <a
-          href={`mailto:${siteConfig.email}`}
+          href={`mailto:${config.email}`}
           className="text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
-          {siteConfig.email}
+          {config.email}
         </a>
       </div>
       <div className="mt-4 flex items-center gap-4">
         <a
-          href={siteConfig.socials.github}
+          href={config.socials.github}
           target="_blank"
           rel="noopener noreferrer"
           className="text-muted-foreground transition-colors hover:text-foreground"
@@ -30,7 +32,7 @@ export function Contact() {
           <IconGitHub className="h-5 w-5" />
         </a>
         <a
-          href={siteConfig.socials.linkedin}
+          href={config.socials.linkedin}
           target="_blank"
           rel="noopener noreferrer"
           className="text-muted-foreground transition-colors hover:text-foreground"
@@ -39,7 +41,7 @@ export function Contact() {
           <IconLinkedIn className="h-5 w-5" />
         </a>
         <a
-          href={siteConfig.socials.twitter}
+          href={config.socials.twitter}
           target="_blank"
           rel="noopener noreferrer"
           className="text-muted-foreground transition-colors hover:text-foreground"

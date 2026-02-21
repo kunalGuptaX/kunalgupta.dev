@@ -5,7 +5,7 @@ import { getPayload } from 'payload'
 import { unstable_cache } from 'next/cache'
 import React from 'react'
 import { BlogCard } from '@/components/blog-card'
-import { siteConfig } from '@/data/site'
+import { getSiteConfig } from '@/utilities/getSiteConfig'
 import { getServerSideURL } from '@/utilities/getURL'
 
 function extractTextFromLexical(content: unknown): string {
@@ -53,7 +53,7 @@ const getCachedPosts = unstable_cache(
 )
 
 export default async function BlogPage() {
-  const posts = await getCachedPosts()
+  const [posts, config] = await Promise.all([getCachedPosts(), getSiteConfig()])
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -63,8 +63,8 @@ export default async function BlogPage() {
     url: `${getServerSideURL()}/blog`,
     isPartOf: {
       '@type': 'WebSite',
-      name: siteConfig.name,
-      url: siteConfig.url,
+      name: config.name,
+      url: config.url,
     },
   }
 

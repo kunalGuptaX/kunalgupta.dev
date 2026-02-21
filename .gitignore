@@ -12,3 +12,4 @@ public/media/
 # Sitemaps (generated at build)
 public/robots.txt
 public/sitemap*.xml
+.yarn

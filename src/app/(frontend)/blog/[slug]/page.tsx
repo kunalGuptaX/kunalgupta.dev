@@ -14,7 +14,7 @@ import type { Category } from '@/payload-types'
 import { generateMeta } from '@/utilities/generateMeta'
 import { formatDateTime } from '@/utilities/formatDateTime'
 import { getServerSideURL } from '@/utilities/getURL'
-import { siteConfig } from '@/data/site'
+import { getSiteConfig } from '@/utilities/getSiteConfig'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import { LivePreviewListener } from '@/components/live-preview-listener'
@@ -45,7 +45,10 @@ export default async function BlogPost({ params: paramsPromise }: Args) {
   const { slug = '' } = await paramsPromise
   const decodedSlug = decodeURIComponent(slug)
   const { isEnabled: draft } = await draftMode()
-  const post = await queryPostBySlug({ slug: decodedSlug, draft })
+  const [post, config] = await Promise.all([
+    queryPostBySlug({ slug: decodedSlug, draft }),
+    getSiteConfig(),
+  ])
 
   if (!post) return notFound()
 
@@ -61,8 +64,8 @@ export default async function BlogPost({ params: paramsPromise }: Args) {
     dateModified: post.updatedAt,
     author: {
       '@type': 'Person',
-      name: siteConfig.name,
-      url: siteConfig.url,
+      name: config.name,
+      url: config.url,
     },
     description: post.meta?.description || '',
     url: `${getServerSideURL()}/blog/${post.slug}`,
