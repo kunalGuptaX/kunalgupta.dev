@@ -1,4 +1,5 @@
 import { Hero } from '@/components/hero'
+import { RecentPosts } from '@/components/recent-posts'
 import { Skills } from '@/components/skills'
 import { Experience } from '@/components/experience'
 import { Projects } from '@/components/projects'
@@ -26,11 +27,11 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Hero />
+      <RecentPosts />
       <Separator className="opacity-50" />
       <Skills />
       <Separator className="opacity-50" />
       <Experience />
-      <Separator className="opacity-50" />
       <Projects />
       <Separator className="opacity-50" />
       <Contact />
