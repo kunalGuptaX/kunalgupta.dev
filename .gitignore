@@ -1,0 +1,14 @@
+node_modules
+.next
+.vercel
+.env
+.DS_Store
+build
+dist
+
+# Payload media uploads
+public/media/
+
+# Sitemaps (generated at build)
+public/robots.txt
+public/sitemap*.xml
