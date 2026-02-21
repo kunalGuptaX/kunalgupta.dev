@@ -5,7 +5,7 @@ import { ExternalLink } from 'lucide-react'
 
 export function Projects() {
   return (
-    <section id="projects" className="py-16 sm:py-20">
+    <section id="projects" aria-label="Projects" className="py-16 sm:py-20">
       <h2 className="text-2xl font-bold tracking-tight text-foreground">Projects</h2>
       <p className="mt-2 text-sm text-muted-foreground">
         A few things I&apos;ve built.

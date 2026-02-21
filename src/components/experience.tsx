@@ -2,7 +2,7 @@ import { experience } from '@/data/resume'
 
 export function Experience() {
   return (
-    <section id="experience" className="py-16 sm:py-20">
+    <section id="experience" aria-label="Work experience" className="py-16 sm:py-20">
       <h2 className="text-2xl font-bold tracking-tight text-foreground">Experience</h2>
       <p className="mt-2 text-sm text-muted-foreground">
         My work history.{' '}

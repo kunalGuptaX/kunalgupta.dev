@@ -2,8 +2,11 @@ import type { Metadata } from 'next/types'
 
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
+import { unstable_cache } from 'next/cache'
 import React from 'react'
 import { BlogCard } from '@/components/blog-card'
+import { siteConfig } from '@/data/site'
+import { getServerSideURL } from '@/utilities/getURL'
 
 function extractTextFromLexical(content: unknown): string {
   if (!content || typeof content !== 'object') return ''
@@ -24,30 +27,53 @@ function extractTextFromLexical(content: unknown): string {
   return full.length > 160 ? full.slice(0, 160) + '...' : full
 }
 
-export const dynamic = 'force-static'
-export const revalidate = 600
+const getCachedPosts = unstable_cache(
+  async () => {
+    const payload = await getPayload({ config: configPromise })
+
+    return payload.find({
+      collection: 'posts',
+      depth: 1,
+      limit: 50,
+      overrideAccess: false,
+      select: {
+        title: true,
+        slug: true,
+        categories: true,
+        publishedAt: true,
+        heroImage: true,
+        meta: true,
+        content: true,
+      },
+      sort: '-publishedAt',
+    })
+  },
+  ['posts-list'],
+  { tags: ['posts-list'] },
+)
 
 export default async function BlogPage() {
-  const payload = await getPayload({ config: configPromise })
+  const posts = await getCachedPosts()
 
-  const posts = await payload.find({
-    collection: 'posts',
-    depth: 1,
-    limit: 50,
-    overrideAccess: false,
-    select: {
-      title: true,
-      slug: true,
-      categories: true,
-      publishedAt: true,
-      meta: true,
-      content: true,
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Blog',
+    description: 'Thoughts on software development, tools, and technology.',
+    url: `${getServerSideURL()}/blog`,
+    isPartOf: {
+      '@type': 'WebSite',
+      name: siteConfig.name,
+      url: siteConfig.url,
     },
-    sort: '-publishedAt',
-  })
+  }
 
   return (
     <div className="mx-auto max-w-[680px] px-6 pb-24 pt-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <h1 className="text-3xl font-bold tracking-tight text-foreground">Blog</h1>
       <p className="mt-2 text-sm text-muted-foreground">
         Thoughts on software development, tools, and technology.
@@ -61,6 +87,10 @@ export default async function BlogPage() {
                 typeof cat === 'object' ? { title: cat.title, slug: cat.slug } : { title: '', slug: null },
               ) ?? null
 
+            const heroImage = post.heroImage && typeof post.heroImage === 'object'
+              ? { url: post.heroImage.sizes?.thumbnail?.url || post.heroImage.url || null, alt: post.heroImage.alt || post.title }
+              : null
+
             return (
               <BlogCard
                 key={post.slug}
@@ -69,6 +99,7 @@ export default async function BlogPage() {
                 publishedAt={post.publishedAt ?? null}
                 description={post.meta?.description || extractTextFromLexical(post.content) || null}
                 categories={categories}
+                heroImage={heroImage}
               />
             )
           })
@@ -84,5 +115,8 @@ export function generateMetadata(): Metadata {
   return {
     title: 'Blog',
     description: 'Thoughts on software development, tools, and technology.',
+    alternates: {
+      canonical: '/blog',
+    },
   }
 }

@@ -8,12 +8,12 @@ export function Nav() {
   return (
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-sm">
       <div className="mx-auto flex max-w-[680px] items-center justify-between px-6 py-4">
-        <Link href="/" className="font-mono text-lg font-bold text-foreground">
+        <Link href="/" className="font-mono text-lg font-bold text-foreground" aria-label="Home">
           {siteConfig.initials}
         </Link>
 
         <div className="flex items-center gap-6">
-          <nav className="hidden items-center gap-6 sm:flex">
+          <nav aria-label="Main navigation" className="hidden items-center gap-6 sm:flex">
             {siteConfig.nav.map((item) => (
               <Link
                 key={item.label}
@@ -25,7 +25,7 @@ export function Nav() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3" aria-label="Social links" role="group">
             <a
               href={siteConfig.socials.github}
               target="_blank"

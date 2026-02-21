@@ -2,7 +2,7 @@ import { siteConfig } from '@/data/site'
 
 export function Hero() {
   return (
-    <section className="pb-16 pt-20 sm:pb-24 sm:pt-28">
+    <section aria-label="About" className="pb-16 pt-20 sm:pb-24 sm:pt-28">
       <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
         {siteConfig.name}
       </h1>

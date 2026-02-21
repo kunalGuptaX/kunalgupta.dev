@@ -8,7 +8,7 @@ export function SiteFooter() {
         <p className="text-sm text-muted-foreground">
           &copy; {new Date().getFullYear()} {siteConfig.name}
         </p>
-        <p className="text-sm text-muted-foreground">
+        <nav aria-label="Footer" className="text-sm text-muted-foreground">
           Built with{' '}
           <Link
             href="https://nextjs.org"
@@ -27,7 +27,7 @@ export function SiteFooter() {
           >
             Payload
           </Link>
-        </p>
+        </nav>
       </div>
     </footer>
   )

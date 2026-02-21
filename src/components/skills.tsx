@@ -3,7 +3,7 @@ import { skills } from '@/data/resume'
 
 export function Skills() {
   return (
-    <section id="skills" className="py-16 sm:py-20">
+    <section id="skills" aria-label="Technical skills" className="py-16 sm:py-20">
       <h2 className="text-2xl font-bold tracking-tight text-foreground">Skills</h2>
       <p className="mt-2 text-sm text-muted-foreground">
         Technologies and tools I work with. These evolve over time.

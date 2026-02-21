@@ -4,7 +4,7 @@ import { Mail } from 'lucide-react'
 
 export function Contact() {
   return (
-    <section id="contact" className="py-16 sm:py-20">
+    <section id="contact" aria-label="Contact information" className="py-16 sm:py-20">
       <h2 className="text-2xl font-bold tracking-tight text-foreground">Get in touch</h2>
       <p className="mt-2 max-w-[480px] text-sm leading-relaxed text-muted-foreground">
         I&apos;m always open to new opportunities and interesting conversations. Feel free to reach

@@ -33,6 +33,7 @@ export const generateMeta = async (args: {
   return {
     description: doc?.meta?.description,
     openGraph: mergeOpenGraph({
+      type: 'article',
       description: doc?.meta?.description || '',
       images: ogImage
         ? [
@@ -43,7 +44,11 @@ export const generateMeta = async (args: {
         : undefined,
       title,
       url: Array.isArray(doc?.slug) ? doc?.slug.join('/') : '/',
+      ...(doc?.publishedAt ? { publishedTime: doc.publishedAt } : {}),
     }),
     title,
+    alternates: {
+      canonical: `/blog/${doc?.slug}`,
+    },
   }
 }
