@@ -3,31 +3,14 @@
 import { useRef, useState, useEffect, memo } from 'react'
 import type { TemplateConfig, ThemeConfig } from './types'
 import { defaultResumeDataV2, DEFAULT_SECTION_ORDER_V2 } from './types/resume'
-import { ClassicLayout } from './templates/layouts/classic'
-import { MinimalLayout } from './templates/layouts/minimal'
-import { ProfessionalLayout } from './templates/layouts/professional'
-import { ModernLayout } from './templates/layouts/modern'
-import { ExecutiveLayout } from './templates/layouts/executive'
-import { CompactLayout } from './templates/layouts/compact'
-import { BoldLayout } from './templates/layouts/bold'
-import { TimelineLayout } from './templates/layouts/timeline'
+import { layoutComponents } from './templates/layout-components'
 
-const layoutComponents: Record<string, typeof ClassicLayout> = {
-  classic: ClassicLayout,
-  minimal: MinimalLayout,
-  professional: ProfessionalLayout,
-  modern: ModernLayout,
-  executive: ExecutiveLayout,
-  compact: CompactLayout,
-  bold: BoldLayout,
-  timeline: TimelineLayout,
-}
+const ClassicLayout = layoutComponents.classic
 
 /** Full A4 width that the layout components are designed for */
 const A4_WIDTH = 794
 
 const sampleSectionOrder = [...DEFAULT_SECTION_ORDER_V2]
-const noop = () => {}
 
 type TemplateThumbnailProps = {
   template: TemplateConfig
@@ -82,11 +65,8 @@ export const TemplateThumbnail = memo(function TemplateThumbnail({
           <LayoutComponent
             data={defaultResumeDataV2}
             theme={theme}
-            isEditing={false}
             sectionOrder={sampleSectionOrder}
             hiddenSections={[]}
-            onDataChange={noop}
-            onSectionOrderChange={noop}
           />
         </div>
       )}

@@ -2,37 +2,18 @@
 
 import type { ResumeDataV2, ThemeConfig } from '../../types'
 import { safeHtml } from '../../sanitize'
+import { stripUrl, hexToRgba, BASE_SECTION_LABELS } from '../shared'
 
 const BODY = '#333'
 const META = '#555'
 const RULE = '#ccc'
 
 const DEFAULT_LABELS: Record<string, string> = {
+  ...BASE_SECTION_LABELS,
   summary: 'Profile',
   work: 'Professional Experience',
-  skills: 'Skills',
-  education: 'Education',
-  projects: 'Projects',
-  interests: 'Interests',
-  languages: 'Languages',
   certificates: 'Certifications',
   volunteer: 'Volunteer Experience',
-  awards: 'Awards',
-  publications: 'Publications',
-  references: 'References',
-}
-
-function stripUrl(url: string) {
-  return url.replace(/^https?:\/\/(www\.)?/, '')
-}
-
-function hexToRgba(hex: string, alpha: number): string {
-  const cleaned = hex.replace('#', '')
-  const r = parseInt(cleaned.substring(0, 2), 16)
-  const g = parseInt(cleaned.substring(2, 4), 16)
-  const b = parseInt(cleaned.substring(4, 6), 16)
-  if (isNaN(r) || isNaN(g) || isNaN(b)) return `rgba(26,26,26,${alpha})`
-  return `rgba(${r},${g},${b},${alpha})`
 }
 
 /* ── Section heading ── */
@@ -85,11 +66,8 @@ function TimelineEntry({
 type TimelineLayoutProps = {
   data: ResumeDataV2
   theme: ThemeConfig
-  isEditing: boolean
   sectionOrder: string[]
   hiddenSections?: string[]
-  onDataChange: (data: ResumeDataV2) => void
-  onSectionOrderChange: (order: string[]) => void
   sectionLabels?: Record<string, string>
 }
 

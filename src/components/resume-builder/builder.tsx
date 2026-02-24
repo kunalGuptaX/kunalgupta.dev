@@ -15,14 +15,7 @@ import {
 import { DEFAULT_SECTION_ORDER_V2, defaultSectionVisibility } from './types/resume'
 import type { SectionId } from './types/resume'
 import { getTemplate } from './templates/registry'
-import { ClassicLayout } from './templates/layouts/classic'
-import { MinimalLayout } from './templates/layouts/minimal'
-import { ProfessionalLayout } from './templates/layouts/professional'
-import { ModernLayout } from './templates/layouts/modern'
-import { ExecutiveLayout } from './templates/layouts/executive'
-import { CompactLayout } from './templates/layouts/compact'
-import { BoldLayout } from './templates/layouts/bold'
-import { TimelineLayout } from './templates/layouts/timeline'
+import { layoutComponents } from './templates/layout-components'
 import { useUndo } from './hooks/use-undo'
 import { DesignPanel } from './design-panel'
 import { FormPanel } from './form-panel'
@@ -129,10 +122,8 @@ function PaginatedPreview({
     return () => observer.disconnect()
   }, [measure])
 
-  useEffect(() => {
-    const id = requestAnimationFrame(measure)
-    return () => cancelAnimationFrame(id)
-  })
+  // MutationObserver above handles all content changes.
+  // No catch-all effect needed — it would fire on every render.
 
   return (
     <div ref={wrapperRef} style={{ display: 'flex', flexDirection: 'column', gap: `${PAGE_GAP}px` }}>
@@ -180,16 +171,7 @@ function PaginatedPreview({
 }
 
 /* ── Layout component map ── */
-const layoutComponents = {
-  classic: ClassicLayout,
-  minimal: MinimalLayout,
-  professional: ProfessionalLayout,
-  modern: ModernLayout,
-  executive: ExecutiveLayout,
-  compact: CompactLayout,
-  bold: BoldLayout,
-  timeline: TimelineLayout,
-} as const
+const ClassicLayout = layoutComponents.classic
 
 /* ── ResumeEditor props ── */
 type ResumeEditorProps = {
@@ -287,23 +269,26 @@ export function ResumeEditor({
   /* ── Auto-save document to localStorage ── */
   useEffect(() => {
     if (!ready) return
-    const doc = storage.getDocument(resumeId)
-    if (!doc) return
-    storage.saveDocument({
-      ...doc,
-      title: resumeTitle,
-      templateId,
-      data,
-      preferences: {
+    const timer = setTimeout(() => {
+      const doc = storage.getDocument(resumeId)
+      if (!doc) return
+      storage.saveDocument({
+        ...doc,
+        title: resumeTitle,
         templateId,
-        theme,
-        sectionOrder,
-        hiddenSections: [],
-        sectionVisibility,
-        sectionLabels,
-        resumeTitle,
-      },
-    })
+        data,
+        preferences: {
+          templateId,
+          theme,
+          sectionOrder,
+          hiddenSections: [],
+          sectionVisibility,
+          sectionLabels,
+          resumeTitle,
+        },
+      })
+    }, 500)
+    return () => clearTimeout(timer)
   }, [resumeId, data, templateId, theme, sectionOrder, sectionVisibility, sectionLabels, resumeTitle, ready])
 
   /* ── Fit-to-container zoom (max 1.2) ── */
@@ -625,11 +610,8 @@ export function ResumeEditor({
                   <LayoutComponent
                     data={data}
                     theme={theme}
-                    isEditing={false}
                     sectionOrder={visibleSections}
                     hiddenSections={[]}
-                    onDataChange={() => {}}
-                    onSectionOrderChange={() => {}}
                     sectionLabels={sectionLabels}
                   />
                 </PaginatedPreview>
@@ -680,11 +662,8 @@ export function ResumeEditor({
           <LayoutComponent
             data={data}
             theme={theme}
-            isEditing={false}
             sectionOrder={visibleSections}
             hiddenSections={[]}
-            onDataChange={() => {}}
-            onSectionOrderChange={() => {}}
             sectionLabels={sectionLabels}
           />
         </div>

@@ -2,6 +2,7 @@
 
 import type { ResumeDataV2, ThemeConfig } from '../../types'
 import { safeHtml } from '../../sanitize'
+import { stripUrl, hexToRgba, BASE_SECTION_LABELS, PhoneIcon, AtSignIcon, LinkIcon, PinIcon, CalendarIcon } from '../shared'
 
 /* ── static colour tokens ── */
 const BODY = '#333'
@@ -9,38 +10,15 @@ const META = '#555'
 const LIGHT = '#888'
 
 /* ── default section labels ── */
-const DEFAULT_LABELS: Record<string, string> = {
-  summary: 'Profile',
-  work: 'Experience',
-  skills: 'Skills',
-  education: 'Education',
-  projects: 'Projects',
-  interests: 'Interests',
-  languages: 'Languages',
-  certificates: 'Certificates',
-  volunteer: 'Volunteer',
-  awards: 'Awards',
-  publications: 'Publications',
-  references: 'References',
-}
+const DEFAULT_LABELS: Record<string, string> = { ...BASE_SECTION_LABELS, summary: 'Profile' }
+
+/* ── icon color for sidebar (white context) ── */
+const SIDEBAR_ICON_COLOR = 'rgba(255,255,255,0.7)'
 
 /* ── sidebar vs main assignment ── */
 const SIDEBAR_SECTIONS = ['skills', 'languages', 'interests', 'certificates', 'references']
 const MAIN_SECTIONS = ['summary', 'work', 'education', 'projects', 'volunteer', 'awards', 'publications']
 
-function stripUrl(url: string) {
-  return url.replace(/^https?:\/\/(www\.)?/, '')
-}
-
-/** Convert hex to rgba */
-function hexToRgba(hex: string, alpha: number): string {
-  const cleaned = hex.replace('#', '')
-  const r = parseInt(cleaned.substring(0, 2), 16)
-  const g = parseInt(cleaned.substring(2, 4), 16)
-  const b = parseInt(cleaned.substring(4, 6), 16)
-  if (isNaN(r) || isNaN(g) || isNaN(b)) return `rgba(26,26,26,${alpha})`
-  return `rgba(${r},${g},${b},${alpha})`
-}
 
 /* ── section heading for main area ── */
 function MainSectionTitle({
@@ -104,62 +82,13 @@ function SidebarSectionTitle({
   )
 }
 
-/* ── icons ── */
-function PhoneIcon() {
-  return (
-    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-    </svg>
-  )
-}
-
-function AtSignIcon() {
-  return (
-    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="4" />
-      <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8" />
-    </svg>
-  )
-}
-
-function PinIcon() {
-  return (
-    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-      <circle cx="12" cy="10" r="3" />
-    </svg>
-  )
-}
-
-function LinkIcon() {
-  return (
-    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-    </svg>
-  )
-}
-
-function CalendarIcon() {
-  return (
-    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={LIGHT} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
-      <line x1="16" x2="16" y1="2" y2="6" />
-      <line x1="8" x2="8" y1="2" y2="6" />
-      <line x1="3" x2="21" y1="10" y2="10" />
-    </svg>
-  )
-}
 
 /* ── props ── */
 type ModernLayoutProps = {
   data: ResumeDataV2
   theme: ThemeConfig
-  isEditing: boolean
   sectionOrder: string[]
   hiddenSections?: string[]
-  onDataChange: (data: ResumeDataV2) => void
-  onSectionOrderChange: (order: string[]) => void
   sectionLabels?: Record<string, string>
 }
 
@@ -221,13 +150,13 @@ export function ModernLayout({
 
   function renderSidebarContact() {
     const items: { icon: React.ReactNode; text: string }[] = []
-    if (data.basics.phone) items.push({ icon: <PhoneIcon />, text: data.basics.phone })
-    if (data.basics.email) items.push({ icon: <AtSignIcon />, text: data.basics.email })
-    if (locationStr) items.push({ icon: <PinIcon />, text: locationStr })
-    if (data.basics.url) items.push({ icon: <LinkIcon />, text: stripUrl(data.basics.url) })
+    if (data.basics.phone) items.push({ icon: <PhoneIcon color={SIDEBAR_ICON_COLOR} />, text: data.basics.phone })
+    if (data.basics.email) items.push({ icon: <AtSignIcon color={SIDEBAR_ICON_COLOR} />, text: data.basics.email })
+    if (locationStr) items.push({ icon: <PinIcon color={SIDEBAR_ICON_COLOR} />, text: locationStr })
+    if (data.basics.url) items.push({ icon: <LinkIcon color={SIDEBAR_ICON_COLOR} />, text: stripUrl(data.basics.url) })
     for (const profile of data.basics.profiles) {
       if (profile.url || profile.username) {
-        items.push({ icon: <LinkIcon />, text: profile.url ? stripUrl(profile.url) : profile.username })
+        items.push({ icon: <LinkIcon color={SIDEBAR_ICON_COLOR} />, text: profile.url ? stripUrl(profile.url) : profile.username })
       }
     }
 
@@ -421,7 +350,7 @@ export function ModernLayout({
             >
               {(job.startDate || job.endDate) && (
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
-                  <CalendarIcon /> {job.startDate}{job.endDate ? ` - ${job.endDate}` : ' - Present'}
+                  <CalendarIcon color={LIGHT} /> {job.startDate}{job.endDate ? ` - ${job.endDate}` : ' - Present'}
                 </span>
               )}
               {job.location && (
@@ -470,7 +399,7 @@ export function ModernLayout({
             >
               {(edu.startDate || edu.endDate) && (
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
-                  <CalendarIcon /> {edu.startDate}{edu.endDate ? ` - ${edu.endDate}` : ''}
+                  <CalendarIcon color={LIGHT} /> {edu.startDate}{edu.endDate ? ` - ${edu.endDate}` : ''}
                 </span>
               )}
               {edu.score && <span>GPA: {edu.score}</span>}
@@ -551,7 +480,7 @@ export function ModernLayout({
             </div>
             {(vol.startDate || vol.endDate) && (
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', marginTop: sp(3), fontSize: fs(10), color: '#666', fontFamily: BODY_FONT }}>
-                <CalendarIcon /> {vol.startDate}{vol.endDate ? ` - ${vol.endDate}` : ' - Present'}
+                <CalendarIcon color={LIGHT} /> {vol.startDate}{vol.endDate ? ` - ${vol.endDate}` : ' - Present'}
               </div>
             )}
             {vol.summary && (

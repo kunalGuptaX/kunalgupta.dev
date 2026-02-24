@@ -229,11 +229,25 @@ export const storage = {
     return []
   },
 
+  /** Fetch a single document by ID without sorting/migrating the entire list. */
   getDocument(id: string): ResumeDocument | null {
-    const docs = this.listDocuments()
-    return docs.find((d) => d.id === id) ?? null
+    if (typeof window === 'undefined') return null
+    try {
+      const raw = localStorage.getItem(KEYS.documents)
+      if (!raw) return null
+      const docs = JSON.parse(raw) as ResumeDocument[]
+      const doc = docs.find((d) => d.id === id)
+      if (!doc) return null
+      if (isV1Data(doc.data)) {
+        return { ...doc, data: migrateV1toV2(doc.data as unknown as ResumeData) }
+      }
+      return { ...doc, data: ensureV2(doc.data) }
+    } catch {
+      return null
+    }
   },
 
+  /** Save a document. `updatedAt` is always overwritten with the current timestamp. */
   saveDocument(doc: ResumeDocument): void {
     try {
       const docs = this.listDocuments()

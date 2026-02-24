@@ -2,6 +2,7 @@
 
 import type { ResumeDataV2, ThemeConfig } from '../../types'
 import { safeHtml } from '../../sanitize'
+import { stripUrl, BASE_SECTION_LABELS, PhoneIcon, AtSignIcon, LinkIcon, PinIcon } from '../shared'
 
 /* ── static colour tokens ── */
 const BODY = '#333'
@@ -9,60 +10,7 @@ const META = '#555'
 const ICON = '#555'
 
 /* ── default section labels ── */
-const DEFAULT_LABELS: Record<string, string> = {
-  summary: 'About Me',
-  work: 'Work Experience',
-  skills: 'Skills',
-  education: 'Education',
-  projects: 'Projects',
-  interests: 'Interests',
-  languages: 'Languages',
-  certificates: 'Certificates',
-  volunteer: 'Volunteer',
-  awards: 'Awards',
-  publications: 'Publications',
-  references: 'References',
-}
-
-/* ── icons ── */
-function PhoneIcon() {
-  return (
-    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={ICON} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-    </svg>
-  )
-}
-
-function AtSignIcon() {
-  return (
-    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={ICON} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="4" />
-      <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8" />
-    </svg>
-  )
-}
-
-function PinIcon() {
-  return (
-    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={ICON} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-      <circle cx="12" cy="10" r="3" />
-    </svg>
-  )
-}
-
-function LinkIcon() {
-  return (
-    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={ICON} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-    </svg>
-  )
-}
-
-function stripUrl(url: string) {
-  return url.replace(/^https?:\/\/(www\.)?/, '')
-}
+const DEFAULT_LABELS: Record<string, string> = { ...BASE_SECTION_LABELS, summary: 'About Me', work: 'Work Experience' }
 
 /* ── themed section heading (minimal style: full-width underline) ── */
 function SectionTitle({
@@ -101,11 +49,8 @@ function SectionTitle({
 type MinimalLayoutProps = {
   data: ResumeDataV2
   theme: ThemeConfig
-  isEditing: boolean
   sectionOrder: string[]
   hiddenSections?: string[]
-  onDataChange: (data: ResumeDataV2) => void
-  onSectionOrderChange: (order: string[]) => void
   sectionLabels?: Record<string, string>
 }
 
@@ -587,23 +532,23 @@ export function MinimalLayout({
         >
           {data.basics.phone && (
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-              <PhoneIcon /> {data.basics.phone}
+              <PhoneIcon color={ICON} /> {data.basics.phone}
             </span>
           )}
           {data.basics.email && (
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-              <AtSignIcon /> {data.basics.email}
+              <AtSignIcon color={ICON} /> {data.basics.email}
             </span>
           )}
           {locationStr && (
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-              <PinIcon /> {locationStr}
+              <PinIcon color={ICON} /> {locationStr}
             </span>
           )}
           {data.basics.profiles.map((profile, i) =>
             (profile.url || profile.username) ? (
               <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                <LinkIcon /> {profile.url ? stripUrl(profile.url) : profile.username}
+                <LinkIcon color={ICON} /> {profile.url ? stripUrl(profile.url) : profile.username}
               </span>
             ) : null,
           )}

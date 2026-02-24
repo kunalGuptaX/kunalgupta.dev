@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
+import { useClickOutside } from './hooks/use-click-outside'
 import { Slider } from '@/components/ui/slider'
 import {
   Type,
@@ -66,18 +67,8 @@ function FontPicker({
     ? fonts.filter((f) => f.toLowerCase().includes(search.toLowerCase()))
     : fonts
 
-  // Close on outside click
-  useEffect(() => {
-    if (!open) return
-    const handler = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false)
-        setSearch('')
-      }
-    }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
-  }, [open])
+  const closePicker = useCallback(() => { setOpen(false); setSearch('') }, [])
+  useClickOutside(containerRef, closePicker, open)
 
   // Focus search when opened
   useEffect(() => {

@@ -2,29 +2,13 @@
 
 import type { ResumeDataV2, ThemeConfig } from '../../types'
 import { safeHtml } from '../../sanitize'
+import { stripUrl, BASE_SECTION_LABELS } from '../shared'
 
 const BODY = '#333'
 const META = '#555'
 const RULE = '#d4d4d4'
 
-const DEFAULT_LABELS: Record<string, string> = {
-  summary: 'Summary',
-  work: 'Experience',
-  skills: 'Skills',
-  education: 'Education',
-  projects: 'Projects',
-  interests: 'Interests',
-  languages: 'Languages',
-  certificates: 'Certifications',
-  volunteer: 'Volunteer',
-  awards: 'Awards',
-  publications: 'Publications',
-  references: 'References',
-}
-
-function stripUrl(url: string) {
-  return url.replace(/^https?:\/\/(www\.)?/, '')
-}
+const DEFAULT_LABELS: Record<string, string> = { ...BASE_SECTION_LABELS, certificates: 'Certifications' }
 
 function SectionTitle({ children, accentColor }: { children: React.ReactNode; accentColor: string }) {
   return (
@@ -49,11 +33,8 @@ function SectionTitle({ children, accentColor }: { children: React.ReactNode; ac
 type CompactLayoutProps = {
   data: ResumeDataV2
   theme: ThemeConfig
-  isEditing: boolean
   sectionOrder: string[]
   hiddenSections?: string[]
-  onDataChange: (data: ResumeDataV2) => void
-  onSectionOrderChange: (order: string[]) => void
   sectionLabels?: Record<string, string>
 }
 

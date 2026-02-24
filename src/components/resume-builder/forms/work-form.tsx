@@ -1,12 +1,12 @@
 'use client'
 
-import { useCallback } from 'react'
 import { Plus, Trash2 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { RichTextEditor } from './rich-text-editor'
 import type { ResumeWork } from '../types/resume'
+import { useListField } from '../hooks/use-list-field'
 
 /* ── WorkForm ── */
 export type WorkFormProps = {
@@ -25,25 +25,7 @@ const emptyWork: ResumeWork = {
 }
 
 export function WorkForm({ data, onChange }: WorkFormProps) {
-  const updateEntry = useCallback(
-    (index: number, partial: Partial<ResumeWork>) => {
-      const updated = [...data]
-      updated[index] = { ...updated[index], ...partial }
-      onChange(updated)
-    },
-    [data, onChange],
-  )
-
-  const addEntry = useCallback(() => {
-    onChange([...data, { ...emptyWork }])
-  }, [data, onChange])
-
-  const removeEntry = useCallback(
-    (index: number) => {
-      onChange(data.filter((_, i) => i !== index))
-    },
-    [data, onChange],
-  )
+  const { updateEntry, addEntry, removeEntry } = useListField(data, onChange, emptyWork)
 
   return (
     <div className="space-y-3">

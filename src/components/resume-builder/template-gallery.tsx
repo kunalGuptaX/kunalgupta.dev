@@ -1,8 +1,9 @@
 'use client'
 
 import { useEffect, useState, useRef, useCallback } from 'react'
+import { useClickOutside } from './hooks/use-click-outside'
 import { useRouter } from 'next/navigation'
-import { Plus, FileText, MoreHorizontal, Pencil, Trash2, Copy, Clock } from 'lucide-react'
+import { Plus, FileText, MoreHorizontal, Pencil, Trash2, Copy, Clock, Check } from 'lucide-react'
 import { storage } from './storage'
 import { defaultResumeDataV2 } from './types/resume'
 import { computeInitialPreferences } from './config/compute-preferences'
@@ -36,8 +37,9 @@ function timeAgo(dateStr: string): string {
 function ResumeCard({
   doc,
   selected,
+  selectionMode,
   onOpen,
-  onClick,
+  onToggleSelect,
   onContextMenu,
   onRename,
   onDuplicate,
@@ -45,8 +47,9 @@ function ResumeCard({
 }: {
   doc: ResumeDocument
   selected: boolean
+  selectionMode: boolean
   onOpen: () => void
-  onClick: (e: React.MouseEvent) => void
+  onToggleSelect: () => void
   onContextMenu: (e: React.MouseEvent) => void
   onRename: () => void
   onDuplicate: () => void
@@ -54,17 +57,8 @@ function ResumeCard({
 }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!menuOpen) return
-    const handler = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setMenuOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
-  }, [menuOpen])
+  const closeMenu = useCallback(() => setMenuOpen(false), [])
+  useClickOutside(menuRef, closeMenu, menuOpen)
 
   const data = doc.data as ResumeDataV2
   const displayName = data.basics?.name ?? ''
@@ -79,8 +73,14 @@ function ResumeCard({
   return (
     <div className="group relative">
       <button
-        onClick={onClick}
-        onDoubleClick={onOpen}
+        onClick={(e) => {
+          // Ctrl/Cmd+click toggles selection
+          if (e.metaKey || e.ctrlKey) { onToggleSelect(); return }
+          // In selection mode, click toggles selection
+          if (selectionMode) { onToggleSelect(); return }
+          // Normal click opens
+          onOpen()
+        }}
         onContextMenu={onContextMenu}
         className={`w-full text-left rounded-lg border overflow-hidden transition-all focus:outline-none focus:ring-2 focus:ring-zinc-500 ${
           selected
@@ -90,13 +90,6 @@ function ResumeCard({
       >
         {/* Preview area */}
         <div className="aspect-[8.5/11] bg-zinc-800/80 flex items-center justify-center relative">
-          {selected && (
-            <div className="absolute top-2 left-2 z-10 size-5 rounded bg-blue-500 flex items-center justify-center">
-              <svg className="size-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-          )}
           {displayName ? (
             <div className="w-[85%] p-3 text-left">
               <div className="text-[10px] font-bold text-zinc-300 uppercase tracking-wider truncate">
@@ -141,7 +134,23 @@ function ResumeCard({
         </div>
       </button>
 
-      {/* Context menu trigger */}
+      {/* Select checkbox — top left, visible on hover or when selected */}
+      <div
+        className={`absolute top-2 left-2 z-10 ${selected || selectionMode ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-opacity`}
+      >
+        <button
+          onClick={(e) => { e.stopPropagation(); onToggleSelect() }}
+          className={`size-5 rounded border flex items-center justify-center transition-colors ${
+            selected
+              ? 'bg-blue-500 border-blue-500'
+              : 'bg-zinc-800/80 border-zinc-600 hover:border-zinc-400'
+          }`}
+        >
+          {selected && <Check className="size-3 text-white" strokeWidth={3} />}
+        </button>
+      </div>
+
+      {/* Three-dot menu — top right */}
       <div ref={menuRef} className="absolute top-2 right-2 z-10">
         <button
           onClick={(e) => { e.stopPropagation(); setMenuOpen((o) => !o) }}
@@ -192,7 +201,7 @@ export function TemplateGallery() {
   const [idsToDelete, setIdsToDelete] = useState<Set<string>>(new Set())
 
   // Right-click context menu
-  const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null)
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; docId: string } | null>(null)
   const contextMenuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -206,17 +215,8 @@ export function TemplateGallery() {
     setSelectedIds(new Set())
   }
 
-  // Close context menu on outside click
-  useEffect(() => {
-    if (!contextMenu) return
-    const handler = (e: MouseEvent) => {
-      if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) {
-        setContextMenu(null)
-      }
-    }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
-  }, [contextMenu])
+  const closeContextMenu = useCallback(() => setContextMenu(null), [])
+  useClickOutside(contextMenuRef, closeContextMenu, !!contextMenu)
 
   // Close context menu on Escape
   useEffect(() => {
@@ -230,32 +230,22 @@ export function TemplateGallery() {
     return () => document.removeEventListener('keydown', handler)
   }, [])
 
-  const handleCardClick = useCallback((doc: ResumeDocument, e: React.MouseEvent) => {
-    if (e.metaKey || e.ctrlKey) {
-      // Toggle selection
-      setSelectedIds((prev) => {
-        const next = new Set(prev)
-        if (next.has(doc.id)) {
-          next.delete(doc.id)
-        } else {
-          next.add(doc.id)
-        }
-        return next
-      })
-    } else {
-      // Single click without modifier — clear selection and select only this
-      setSelectedIds(new Set([doc.id]))
-    }
+  const handleToggleSelect = useCallback((doc: ResumeDocument) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(doc.id)) {
+        next.delete(doc.id)
+      } else {
+        next.add(doc.id)
+      }
+      return next
+    })
   }, [])
 
   const handleCardContextMenu = useCallback((doc: ResumeDocument, e: React.MouseEvent) => {
     e.preventDefault()
-    // If right-clicking a non-selected card, select only that card
-    if (!selectedIds.has(doc.id)) {
-      setSelectedIds(new Set([doc.id]))
-    }
-    setContextMenu({ x: e.clientX, y: e.clientY })
-  }, [selectedIds])
+    setContextMenu({ x: e.clientX, y: e.clientY, docId: doc.id })
+  }, [])
 
   // Click on empty area clears selection
   const handleBackgroundClick = useCallback((e: React.MouseEvent) => {
@@ -408,11 +398,6 @@ export function TemplateGallery() {
           <>
             <div className="text-xs text-zinc-500 uppercase tracking-wider font-medium mb-4">
               Recent ({documents.length})
-              {documents.length > 0 && (
-                <span className="ml-3 normal-case tracking-normal text-zinc-600">
-                  Ctrl+click to select multiple &middot; Right-click for options
-                </span>
-              )}
             </div>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
               {/* New resume card */}
@@ -434,8 +419,9 @@ export function TemplateGallery() {
                   <ResumeCard
                     doc={doc}
                     selected={selectedIds.has(doc.id)}
+                    selectionMode={selectedIds.size > 0}
                     onOpen={() => handleOpen(doc)}
-                    onClick={(e) => handleCardClick(doc, e)}
+                    onToggleSelect={() => handleToggleSelect(doc)}
                     onContextMenu={(e) => handleCardContextMenu(doc, e)}
                     onRename={() => handleRename(doc)}
                     onDuplicate={() => handleDuplicate(doc)}
@@ -449,52 +435,43 @@ export function TemplateGallery() {
       </div>
 
       {/* Right-click context menu */}
-      {contextMenu && selectedCount > 0 && (
-        <div
-          ref={contextMenuRef}
-          className="fixed z-50 w-48 rounded-md border border-zinc-700 bg-zinc-800 shadow-xl overflow-hidden"
-          style={{ left: contextMenu.x, top: contextMenu.y }}
-        >
-          {selectedCount === 1 && (
-            <>
-              {(() => {
-                const doc = documents.find((d) => selectedIds.has(d.id))
-                if (!doc) return null
-                return (
-                  <>
-                    <button
-                      onClick={() => handleOpen(doc)}
-                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-700 transition-colors"
-                    >
-                      <FileText className="size-3.5" /> Open
-                    </button>
-                    <button
-                      onClick={() => handleRename(doc)}
-                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-700 transition-colors"
-                    >
-                      <Pencil className="size-3.5" /> Rename
-                    </button>
-                    <button
-                      onClick={() => { handleDuplicate(doc); setContextMenu(null) }}
-                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-700 transition-colors"
-                    >
-                      <Copy className="size-3.5" /> Duplicate
-                    </button>
-                    <div className="h-px bg-zinc-700 mx-2" />
-                  </>
-                )
-              })()}
-            </>
-          )}
-          <button
-            onClick={handleDeleteSelected}
-            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-zinc-700 transition-colors"
+      {contextMenu && (() => {
+        const doc = documents.find((d) => d.id === contextMenu.docId)
+        if (!doc) return null
+        return (
+          <div
+            ref={contextMenuRef}
+            className="fixed z-50 w-48 rounded-md border border-zinc-700 bg-zinc-800 shadow-xl overflow-hidden"
+            style={{ left: contextMenu.x, top: contextMenu.y }}
           >
-            <Trash2 className="size-3.5" />
-            Delete{selectedCount > 1 ? ` (${selectedCount})` : ''}
-          </button>
-        </div>
-      )}
+            <button
+              onClick={() => { handleOpen(doc); setContextMenu(null) }}
+              className="w-full flex items-center gap-2 px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-700 transition-colors"
+            >
+              <FileText className="size-3.5" /> Open
+            </button>
+            <button
+              onClick={() => { handleRename(doc); setContextMenu(null) }}
+              className="w-full flex items-center gap-2 px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-700 transition-colors"
+            >
+              <Pencil className="size-3.5" /> Rename
+            </button>
+            <button
+              onClick={() => { handleDuplicate(doc); setContextMenu(null) }}
+              className="w-full flex items-center gap-2 px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-700 transition-colors"
+            >
+              <Copy className="size-3.5" /> Duplicate
+            </button>
+            <div className="h-px bg-zinc-700 mx-2" />
+            <button
+              onClick={() => { handleDelete(doc); setContextMenu(null) }}
+              className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-zinc-700 transition-colors"
+            >
+              <Trash2 className="size-3.5" /> Delete
+            </button>
+          </div>
+        )
+      })()}
 
       {/* Onboarding wizard (replaces old template picker modal) */}
       <OnboardingWizard

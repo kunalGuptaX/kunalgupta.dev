@@ -2,6 +2,7 @@
 
 import type { ResumeDataV2, ThemeConfig } from '../../types'
 import { safeHtml } from '../../sanitize'
+import { stripUrl, BASE_SECTION_LABELS } from '../shared'
 
 /* ── static colour tokens ── */
 const BODY = '#333'
@@ -10,22 +11,13 @@ const RULE = '#ccc'
 
 /* ── default section labels ── */
 const DEFAULT_LABELS: Record<string, string> = {
+  ...BASE_SECTION_LABELS,
   summary: 'Professional Summary',
   work: 'Work Experience',
   skills: 'Technical Skills',
-  education: 'Education',
-  projects: 'Projects',
-  interests: 'Interests',
-  languages: 'Languages',
   certificates: 'Certifications',
   volunteer: 'Volunteer Experience',
   awards: 'Awards & Honors',
-  publications: 'Publications',
-  references: 'References',
-}
-
-function stripUrl(url: string) {
-  return url.replace(/^https?:\/\/(www\.)?/, '')
 }
 
 /* ── ATS-friendly section heading: bold uppercase + thin rule ── */
@@ -65,11 +57,8 @@ function SectionTitle({
 type ProfessionalLayoutProps = {
   data: ResumeDataV2
   theme: ThemeConfig
-  isEditing: boolean
   sectionOrder: string[]
   hiddenSections?: string[]
-  onDataChange: (data: ResumeDataV2) => void
-  onSectionOrderChange: (order: string[]) => void
   sectionLabels?: Record<string, string>
 }
 

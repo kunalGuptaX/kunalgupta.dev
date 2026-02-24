@@ -2,6 +2,7 @@
 
 import type { ResumeDataV2, ThemeConfig } from '../../types'
 import { safeHtml } from '../../sanitize'
+import { stripUrl, BASE_SECTION_LABELS } from '../shared'
 
 /* ── static colour tokens ── */
 const BODY = '#2d2d2d'
@@ -11,22 +12,14 @@ const RULE = '#c5c5c5'
 
 /* ── default section labels (executive tone) ── */
 const DEFAULT_LABELS: Record<string, string> = {
+  ...BASE_SECTION_LABELS,
   summary: 'Executive Summary',
   work: 'Professional Experience',
   skills: 'Core Competencies',
-  education: 'Education',
   projects: 'Key Initiatives',
-  interests: 'Interests',
-  languages: 'Languages',
   certificates: 'Certifications',
   volunteer: 'Board & Volunteer Service',
   awards: 'Honors & Awards',
-  publications: 'Publications',
-  references: 'References',
-}
-
-function stripUrl(url: string) {
-  return url.replace(/^https?:\/\/(www\.)?/, '')
 }
 
 /* ── Executive section heading: small-caps text with a thin line extending right ── */
@@ -85,11 +78,8 @@ function SectionTitle({
 type ExecutiveLayoutProps = {
   data: ResumeDataV2
   theme: ThemeConfig
-  isEditing: boolean
   sectionOrder: string[]
   hiddenSections?: string[]
-  onDataChange: (data: ResumeDataV2) => void
-  onSectionOrderChange: (order: string[]) => void
   sectionLabels?: Record<string, string>
 }
 

@@ -16,6 +16,8 @@ export function useUndo<T>(initialValue: T, options: UseUndoOptions = {}) {
   const pointerRef = useRef(0)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const isUndoRedoRef = useRef(false)
+  // Revision counter — bumped when history changes so canUndo/canRedo re-derive
+  const [, bumpRev] = useState(0)
 
   const pushToHistory = useCallback(
     (newValue: T) => {
@@ -45,6 +47,8 @@ export function useUndo<T>(initialValue: T, options: UseUndoOptions = {}) {
         if (timerRef.current) clearTimeout(timerRef.current)
         timerRef.current = setTimeout(() => {
           pushToHistory(resolved)
+          timerRef.current = null
+          bumpRev((n) => n + 1)
         }, debounceMs)
 
         return resolved
