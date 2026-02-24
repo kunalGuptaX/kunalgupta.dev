@@ -1,4 +1,5 @@
-import type { ResumeData } from '@/components/resume-builder/types'
+import type { ResumeDataV2 } from '@/components/resume-builder/types'
+import { emptyResumeDataV2 } from '@/components/resume-builder/types/resume'
 
 type SiteConfig = {
   name: string
@@ -25,42 +26,58 @@ type ResumeProject = {
   sourceUrl?: string
 }
 
-type ResumeSkill = { name: string }
-
 export function siteToResumeData(
   config: SiteConfig,
   resume: {
-    skills: ResumeSkill[]
+    skills: { name: string }[]
     experience: ResumeExperience[]
     projects: ResumeProject[]
   },
-): ResumeData {
+): ResumeDataV2 {
+  const profiles: ResumeDataV2['basics']['profiles'] = []
+  if (config.socials.linkedin) {
+    profiles.push({ network: 'LinkedIn', username: '', url: config.socials.linkedin })
+  }
+  if (config.socials.github) {
+    profiles.push({ network: 'GitHub', username: '', url: config.socials.github })
+  }
+
   return {
-    name: config.name,
-    title: config.title,
-    email: config.email,
-    phone: '',
-    location: '',
-    linkedin: config.socials.linkedin,
-    github: config.socials.github,
-    summary: config.bio,
-    skills: resume.skills.map((s) => s.name),
-    experience: resume.experience.map((exp) => ({
-      role: exp.role,
-      company: exp.company,
+    ...emptyResumeDataV2,
+    basics: {
+      ...emptyResumeDataV2.basics,
+      name: config.name,
+      label: config.title,
+      email: config.email,
+      summary: config.bio,
+      profiles,
+    },
+    work: resume.experience.map((exp) => ({
+      name: exp.company,
+      position: exp.role,
+      url: '',
       startDate: exp.startDate,
       endDate: exp.endDate,
+      summary: exp.bullets.length > 0
+        ? '<ul>' + exp.bullets.map((b) => `<li>${b}</li>`).join('') + '</ul>'
+        : '',
       location: exp.location,
-      bullets: exp.bullets,
     })),
-    education: [],
+    skills: resume.skills.map((s) => s.name),
     projects: resume.projects.map((p) => ({
       name: p.name,
       description: p.description,
-      techStack: p.techStack,
-      liveUrl: p.liveUrl,
-      sourceUrl: p.sourceUrl,
+      keywords: p.techStack,
+      startDate: '',
+      endDate: '',
+      url: p.liveUrl ?? p.sourceUrl ?? '',
+      roles: [],
+      entity: '',
+      type: '',
     })),
-    strengths: [],
+    meta: {
+      ...emptyResumeDataV2.meta,
+      lastModified: new Date().toISOString(),
+    },
   }
 }

@@ -1,3 +1,63 @@
+import type { ResumeDataV2 as _ResumeDataV2 } from './types/resume'
+
+// Re-export V2 types as the primary data model
+export type {
+  ResumeDataV2,
+  ResumeBasics,
+  ResumeWork,
+  ResumeEducation,
+  ResumeLanguage,
+  ResumeProject,
+  ResumeVolunteer,
+  ResumeAward,
+  ResumeCertificate,
+  ResumePublication,
+  ResumeInterest,
+  ResumeReference,
+  ResumeMeta,
+  ResumeLocation,
+  ResumeProfile,
+  SectionId,
+  SectionVisibility,
+} from './types/resume'
+
+export {
+  emptyResumeDataV2,
+  defaultResumeDataV2,
+  emptyLocation,
+  ALL_SECTION_IDS,
+  DEFAULT_SECTION_ORDER_V2,
+  defaultSectionVisibility,
+} from './types/resume'
+
+// ── V1 types (kept for migration only) ──
+
+export type CustomElementType = 'text' | 'bullets' | 'tags' | 'dated-entries'
+
+export type DatedEntry = {
+  title: string
+  subtitle: string
+  startDate: string
+  endDate: string
+  location: string
+  bullets: string[]
+}
+
+export type CustomSectionElement = {
+  id: string
+  type: CustomElementType
+  textValue?: string
+  items?: string[]
+  entries?: DatedEntry[]
+}
+
+export type CustomSection = {
+  id: string
+  title: string
+  elements: CustomSectionElement[]
+}
+
+/** @deprecated Use ResumeDataV2 instead */
 export type ResumeData = {
   name: string
   title: string
@@ -31,22 +91,61 @@ export type ResumeData = {
     sourceUrl?: string
   }[]
   strengths: string[]
+  customSections: CustomSection[]
 }
 
-export const emptyResumeData: ResumeData = {
-  name: '',
-  title: '',
-  email: '',
-  phone: '',
-  location: '',
-  linkedin: '',
-  github: '',
-  summary: '',
-  skills: [],
-  experience: [],
-  education: [],
-  projects: [],
-  strengths: [],
+// ── Theme (shared across V1 and V2) ──
+
+export type ThemeConfig = {
+  accentColor: string
+  headingFont: string
+  bodyFont: string
+  fontSize: number // offset from base (-3 to +4)
+  spacing: number // multiplier (0.6 to 1.6)
+}
+
+export type TemplateLayoutId = 'classic' | 'minimal' | 'professional' | 'modern' | 'executive' | 'compact' | 'bold' | 'timeline'
+
+export type TemplateConfig = {
+  id: string
+  name: string
+  description: string
+  thumbnail: string
+  layout: TemplateLayoutId
+  defaultTheme: ThemeConfig
+  tags: string[]
+  /** Which job categories this template is recommended for (empty = all) */
+  categories?: string[]
+  /** Which seniority levels this template suits (empty = all) */
+  seniority?: string[]
+}
+
+export type UserPreferences = {
+  templateId: string
+  theme: ThemeConfig
+  sectionOrder: string[]
+  hiddenSections: string[]
+  sectionVisibility?: Record<string, boolean>
+  sectionLabels?: Record<string, string>
+  resumeTitle?: string
+}
+
+export type ResumeDocument = {
+  id: string
+  title: string
+  templateId: string
+  data: _ResumeDataV2
+  preferences: UserPreferences
+  createdAt: string // ISO date
+  updatedAt: string // ISO date
+}
+
+export const DEFAULT_THEME: ThemeConfig = {
+  accentColor: '#1a1a1a',
+  headingFont: 'Bitter',
+  bodyFont: 'Inter',
+  fontSize: 0,
+  spacing: 1.0,
 }
 
 export const defaultResumeData: ResumeData = {
@@ -60,18 +159,8 @@ export const defaultResumeData: ResumeData = {
   summary:
     'Full Stack Developer with 5+ years of experience building scalable web applications. Passionate about clean code, performance optimization, and delivering exceptional user experiences. Experienced in leading small teams and shipping products from concept to production.',
   skills: [
-    'TypeScript',
-    'React',
-    'Next.js',
-    'Node.js',
-    'PostgreSQL',
-    'GraphQL',
-    'AWS',
-    'Docker',
-    'Tailwind CSS',
-    'Python',
-    'Redis',
-    'Git',
+    'TypeScript', 'React', 'Next.js', 'Node.js', 'PostgreSQL', 'GraphQL',
+    'AWS', 'Docker', 'Tailwind CSS', 'Python', 'Redis', 'Git',
   ],
   experience: [
     {
@@ -126,11 +215,25 @@ export const defaultResumeData: ResumeData = {
     },
   ],
   strengths: [
-    'Problem Solving',
-    'System Design',
-    'Team Leadership',
-    'Technical Communication',
-    'Agile Methodologies',
-    'Continuous Learning',
+    'Problem Solving', 'System Design', 'Team Leadership',
+    'Technical Communication', 'Agile Methodologies', 'Continuous Learning',
   ],
+  customSections: [],
+}
+
+export const emptyResumeData: ResumeData = {
+  name: '',
+  title: '',
+  email: '',
+  phone: '',
+  location: '',
+  linkedin: '',
+  github: '',
+  summary: '',
+  skills: [],
+  experience: [],
+  education: [],
+  projects: [],
+  strengths: [],
+  customSections: [],
 }

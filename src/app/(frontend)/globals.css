@@ -154,6 +154,17 @@
   }
 }
 
+/* Rich text content in resume templates (ATS-safe HTML: p, ul, ol, li, strong, em) */
+.resume-rich-text p { margin: 0 0 2px 0; }
+.resume-rich-text p:last-child { margin-bottom: 0; }
+.resume-rich-text ul, .resume-rich-text ol { margin: 2px 0; padding-left: 16px; }
+.resume-rich-text ul { list-style-type: disc; }
+.resume-rich-text ol { list-style-type: decimal; }
+.resume-rich-text li { margin-bottom: 1px; }
+.resume-rich-text li:last-child { margin-bottom: 0; }
+.resume-rich-text strong { font-weight: 600; }
+.resume-rich-text em { font-style: italic; }
+
 /* Print styles for resume builder */
 @media print {
   @page {

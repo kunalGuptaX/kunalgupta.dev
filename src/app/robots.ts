@@ -13,5 +13,7 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
     sitemap: [`${siteUrl}/sitemap.xml`, `${siteUrl}/posts-sitemap.xml`],
+    // Allow AI answer engines to crawl
+    host: siteUrl,
   }
 }
