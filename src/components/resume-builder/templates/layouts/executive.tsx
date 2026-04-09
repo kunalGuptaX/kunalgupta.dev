@@ -723,6 +723,13 @@ export function ExecutiveLayout({
             >
               {[pub.publisher, pub.releaseDate].filter(Boolean).join(' \u2022 ')}
             </div>
+            {(pub.publicationType || pub.impactFactor != null) && (
+              <div style={{ fontSize: fs(10), color: LIGHT, fontFamily: BODY_FONT, marginTop: sp(2) }}>
+                {pub.publicationType && <span>Type: {pub.publicationType}</span>}
+                {pub.publicationType && pub.impactFactor != null && <span> · </span>}
+                {pub.impactFactor != null && <span>Impact Factor: {pub.impactFactor}</span>}
+              </div>
+            )}
             {pub.summary && (
               <div
                 className="resume-rich-text"

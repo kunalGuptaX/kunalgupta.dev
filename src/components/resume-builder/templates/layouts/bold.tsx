@@ -281,6 +281,13 @@ export function BoldLayout({
           <div key={i} style={{ marginBottom: i < data.publications.length - 1 ? sp(6) : 0 }}>
             <div style={{ fontSize: fs(12), fontWeight: 700, color: ACCENT, fontFamily: BODY_FONT }}>{p.name}</div>
             <div style={{ fontSize: fs(10), color: META, fontFamily: BODY_FONT }}>{[p.publisher, p.releaseDate].filter(Boolean).join(' | ')}</div>
+            {(p.publicationType || p.impactFactor != null) && (
+              <div style={{ fontSize: fs(9.5), color: META, fontFamily: BODY_FONT, marginTop: sp(2) }}>
+                {p.publicationType && <span>Type: {p.publicationType}</span>}
+                {p.publicationType && p.impactFactor != null && <span> · </span>}
+                {p.impactFactor != null && <span>Impact Factor: {p.impactFactor}</span>}
+              </div>
+            )}
             {p.summary && <div className="resume-rich-text" style={{ margin: `${sp(2)} 0 0 0`, fontSize: fs(10.5), lineHeight: 1.5, color: BODY, fontFamily: BODY_FONT }} dangerouslySetInnerHTML={{ __html: safeHtml(p.summary) }} />}
           </div>
         ))}

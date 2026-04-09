@@ -329,6 +329,8 @@ const emptyPublication: ResumePublication = {
   releaseDate: '',
   url: '',
   summary: '',
+  publicationType: '',
+  impactFactor: undefined,
 }
 
 export function PublicationsForm({ data, onChange }: PublicationsFormProps) {
@@ -373,6 +375,30 @@ export function PublicationsForm({ data, onChange }: PublicationsFormProps) {
                 value={entry.releaseDate}
                 onChange={(e) => updateEntry(index, { releaseDate: e.target.value })}
                 placeholder="2023-03"
+                className="h-8 text-sm"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Type</Label>
+              <Input
+                value={entry.publicationType || ''}
+                onChange={(e) => updateEntry(index, { publicationType: e.target.value })}
+                placeholder="e.g. Journal Article"
+                className="h-8 text-sm"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Impact Factor</Label>
+              <Input
+                type="number"
+                min={0}
+                step={0.001}
+                value={entry.impactFactor ?? ''}
+                onChange={(e) => updateEntry(index, { impactFactor: e.target.value === '' ? undefined : parseFloat(e.target.value) })}
+                placeholder="e.g. 4.25"
                 className="h-8 text-sm"
               />
             </div>

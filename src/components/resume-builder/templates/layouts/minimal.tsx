@@ -434,6 +434,13 @@ export function MinimalLayout({
             <div style={{ fontSize: fs(11), color: META, fontFamily: BODY_FONT }}>
               {[pub.publisher, pub.releaseDate].filter(Boolean).join(' | ')}
             </div>
+            {(pub.publicationType || pub.impactFactor != null) && (
+              <div style={{ fontSize: fs(10), color: META, fontFamily: BODY_FONT, marginTop: sp(2) }}>
+                {pub.publicationType && <span>Type: {pub.publicationType}</span>}
+                {pub.publicationType && pub.impactFactor != null && <span> · </span>}
+                {pub.impactFactor != null && <span>Impact Factor: {pub.impactFactor}</span>}
+              </div>
+            )}
             {pub.summary && (
               <div className="resume-rich-text" style={{ margin: `${sp(2)} 0 0 0`, fontSize: fs(12), lineHeight: 1.6, color: BODY, fontFamily: BODY_FONT }} dangerouslySetInnerHTML={{ __html: safeHtml(pub.summary) }} />
             )}

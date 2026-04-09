@@ -256,6 +256,12 @@ export function CompactLayout({
             <span style={{ fontWeight: 700 }}>{p.name}</span>
             {p.publisher && <span style={{ color: META }}> — {p.publisher}</span>}
             {p.releaseDate && <span style={{ color: META }}> ({p.releaseDate})</span>}
+            {(p.publicationType || p.impactFactor != null) && (
+              <span style={{ color: META }}>
+                {p.publicationType && <span> · Type: {p.publicationType}</span>}
+                {p.impactFactor != null && <span> · Impact Factor: {p.impactFactor}</span>}
+              </span>
+            )}
           </div>
         ))}
       </div>

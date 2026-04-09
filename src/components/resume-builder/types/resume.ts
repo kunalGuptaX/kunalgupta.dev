@@ -107,6 +107,8 @@ export type ResumePublication = {
   releaseDate: string
   url: string
   summary: string // HTML
+  publicationType?: string
+  impactFactor?: number
 }
 
 export type ResumeInterest = {
