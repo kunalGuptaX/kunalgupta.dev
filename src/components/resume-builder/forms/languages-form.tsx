@@ -1,7 +1,20 @@
 'use client'
 
-import { useCallback } from 'react'
-import { Plus, Trash2 } from 'lucide-react'
+import { Plus } from 'lucide-react'
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  KeyboardSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
@@ -12,7 +25,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { SortableEntryCard } from './sortable-entry-card'
 import type { ResumeLanguage } from '../types/resume'
+import { useListField } from '../hooks/use-list-field'
 
 const FLUENCY_LEVELS = ['Native', 'Fluent', 'Advanced', 'Intermediate', 'Beginner']
 
@@ -28,67 +43,67 @@ const emptyLanguage: ResumeLanguage = {
 }
 
 export function LanguagesForm({ data, onChange }: LanguagesFormProps) {
-  const updateEntry = useCallback(
-    (index: number, partial: Partial<ResumeLanguage>) => {
-      const updated = [...data]
-      updated[index] = { ...updated[index], ...partial }
-      onChange(updated)
-    },
-    [data, onChange],
+  const { updateEntry, addEntry, removeEntry, reorderEntry, entryIds } = useListField(data, onChange, emptyLanguage)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   )
 
-  const addEntry = useCallback(() => {
-    onChange([...data, { ...emptyLanguage }])
-  }, [data, onChange])
-
-  const removeEntry = useCallback(
-    (index: number) => {
-      onChange(data.filter((_, i) => i !== index))
-    },
-    [data, onChange],
-  )
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    const from = entryIds.indexOf(String(active.id))
+    const to = entryIds.indexOf(String(over.id))
+    if (from === -1 || to === -1) return
+    reorderEntry(from, to)
+  }
 
   return (
-    <div className="space-y-3">
-      {data.map((entry, index) => (
-        <div key={index} className="flex items-end gap-2">
-          <div className="flex-1 space-y-1">
-            <Label className="text-xs text-muted-foreground">Language</Label>
-            <Input
-              value={entry.language}
-              onChange={(e) => updateEntry(index, { language: e.target.value })}
-              placeholder="English, Spanish..."
-              className="h-8 text-sm"
-            />
-          </div>
-          <div className="flex-1 space-y-1">
-            <Label className="text-xs text-muted-foreground">Fluency</Label>
-            <Select
-              value={entry.fluency}
-              onValueChange={(fluency) => updateEntry(index, { fluency })}
+    <div className="space-y-2">
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={entryIds} strategy={verticalListSortingStrategy}>
+          {data.map((entry, index) => (
+            <SortableEntryCard
+              key={entryIds[index]}
+              id={entryIds[index]}
+              label={[entry.language, entry.fluency].filter(Boolean).join(' · ')}
+              fallback={`Language ${index + 1}`}
+              onRemove={() => removeEntry(index)}
             >
-              <SelectTrigger className="h-8 text-sm">
-                <SelectValue placeholder="Select level" />
-              </SelectTrigger>
-              <SelectContent>
-                {FLUENCY_LEVELS.map((level) => (
-                  <SelectItem key={level} value={level}>
-                    {level}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <button
-            type="button"
-            onClick={() => removeEntry(index)}
-            className="shrink-0 p-1.5 mb-0.5 rounded-md text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors"
-            title="Remove language"
-          >
-            <Trash2 className="size-3.5" />
-          </button>
-        </div>
-      ))}
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Language</Label>
+                  <Input
+                    value={entry.language}
+                    onChange={(e) => updateEntry(index, { language: e.target.value })}
+                    placeholder="English, Spanish..."
+                    className="h-8 text-sm"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Fluency</Label>
+                  <Select
+                    value={entry.fluency}
+                    onValueChange={(fluency) => updateEntry(index, { fluency })}
+                  >
+                    <SelectTrigger className="h-8 text-sm">
+                      <SelectValue placeholder="Select level" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {FLUENCY_LEVELS.map((level) => (
+                        <SelectItem key={level} value={level}>
+                          {level}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </SortableEntryCard>
+          ))}
+        </SortableContext>
+      </DndContext>
 
       <Button
         type="button"
