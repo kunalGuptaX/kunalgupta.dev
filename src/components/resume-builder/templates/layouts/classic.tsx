@@ -50,7 +50,8 @@ function SectionTitle({
       >
         {children}
       </h2>
-      <div style={{ width: '100%', height: '3px', backgroundColor: accentColor, marginTop: '2px' }} />
+      <hr style={{ width: '100%', height: '3px', backgroundColor: accentColor, marginTop: '2px' }} />
+      {/* <div style={{ width: '100%', height: '3px', backgroundColor: accentColor, marginTop: '2px' }} /> */}
     </div>
   )
 }
@@ -145,7 +146,7 @@ export function ClassicLayout({
           {label('work')}
         </SectionTitle>
         {data.work.map((job, i) => (
-          <div key={i} data-break-avoid>
+          <div key={job.name} data-break-avoid>
             {i > 0 && (
               <div style={{ borderBottom: '1px dashed #ccc', margin: `${sp(12)} 0` }} />
             )}
@@ -554,7 +555,7 @@ export function ClassicLayout({
         )}
 
         {/* Contact row */}
-        {contactItems.length > 0 && (
+        {contactItems.length > 0 || locationStr ? (
           <div
             style={{
               display: 'flex',
@@ -573,27 +574,19 @@ export function ClassicLayout({
                 {item.icon} {item.text}
               </span>
             ))}
+            {locationStr && (
+              <span
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+              >
+                <PinIcon color={ICON} />
+                {locationStr}
+              </span>
+            )}
           </div>
-        )}
+        ) : null}
 
         {/* Location row */}
-        {locationStr && (
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '4px',
-              marginTop: sp(4),
-              fontSize: fs(11),
-              fontWeight: 600,
-              color: '#444',
-              fontFamily: BODY_FONT,
-            }}
-          >
-            <PinIcon color={ICON} />
-            {locationStr}
-          </div>
-        )}
+
       </div>
 
       {/* ── Two-column layout ── */}

@@ -87,7 +87,7 @@ function PaginatedPreview({
         if (startPage !== endPage && elTop > 0) {
           const nextPageStart = (startPage + 1) * CONTENT_HEIGHT
           const pushDown = nextPageStart - elTop
-          el.style.marginTop = `${pushDown}px`
+          // el.style.marginTop = `${pushDown}px`
           adjusted = true
           break
         }
@@ -531,11 +531,10 @@ export function ResumeEditor({
                   <button
                     onClick={undo}
                     disabled={!canUndo}
-                    className={`rounded-md p-2 transition-colors ${
-                      canUndo
+                    className={`rounded-md p-2 transition-colors ${canUndo
                         ? 'text-zinc-300 hover:bg-zinc-700 hover:text-white'
                         : 'text-zinc-600 cursor-not-allowed'
-                    }`}
+                      }`}
                   >
                     <Undo2 className="size-4" />
                   </button>
@@ -547,11 +546,10 @@ export function ResumeEditor({
                   <button
                     onClick={redo}
                     disabled={!canRedo}
-                    className={`rounded-md p-2 transition-colors ${
-                      canRedo
+                    className={`rounded-md p-2 transition-colors ${canRedo
                         ? 'text-zinc-300 hover:bg-zinc-700 hover:text-white'
                         : 'text-zinc-600 cursor-not-allowed'
-                    }`}
+                      }`}
                   >
                     <Redo2 className="size-4" />
                   </button>
